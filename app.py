@@ -11,7 +11,7 @@ DEBUG = os.getenv('DEBUG', False)
 app = Flask(__name__)
 
 
-@app.route('/api', methods=['GET'])
+@app.route('/api', methods=['GET', 'POST'])
 def api():
     if API_KEY is None:
         return 'Missing configuration for API_KEY', 500
