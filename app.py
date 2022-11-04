@@ -11,6 +11,24 @@ DEBUG = os.getenv('DEBUG', False)
 app = Flask(__name__)
 
 
+@app.route('/api', methods=['GET'])
+def api():
+    if API_KEY is None:
+        return 'Missing configuration for API_KEY', 500
+
+    client = wolframalpha.Client(API_KEY)
+    query = request.args.get('query')
+    res = client.query(query)
+
+    if len(res.pods) == 0:
+        return jsonify({'text': "Sorry, I couldn't find any relevant information for you."})
+    try:
+        response = next(res.results).text
+    except StopIteration:
+        response = "Sorry, I couldn't get a result for that query."
+    return jsonify({'text': response})
+
+
 @app.route("/", methods=['GET', 'POST'])
 def main():
     if request.method == 'POST':
