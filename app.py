@@ -18,15 +18,15 @@ def api():
 
     client = wolframalpha.Client(API_KEY)
     query = request.args.get('query')
-    res = client.query(query)
+    if query is None:
+        return jsonify({'text': "API home page"})
 
-    if len(res.pods) == 0:
-        return jsonify({'text': "Sorry, I couldn't find any relevant information for you."})
+    res = client.query(query)
     try:
         response = next(res.results).text
+        return jsonify({'text': "OK", 'result': response})
     except StopIteration:
-        response = "Sorry, I couldn't get a result for that query."
-    return jsonify({'text': response})
+        return jsonify({'text': "Sorry, I couldn't get a result for that query.", 'result': ""})
 
 
 @app.route("/", methods=['GET', 'POST'])
